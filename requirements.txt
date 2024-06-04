@@ -1,0 +1,16 @@
+Nextjs
+Nextauth
+Mongoose
+bcrypt
+react toastify
+
+Login Page
+Sign Up Page
+
+Server Action For Signup
+Route to register a customer
+
+Nextauth
+    Create a middleware Route
+    authOptions, 
+
