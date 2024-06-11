@@ -11,19 +11,10 @@ const Header = () => {
       <div className="container mx-auto flex flex-col md:flex-row items-center justify-between">
         <div className="flex items-center mb-4 md:mb-0">
           <Link href="/" legacyBehavior>
-            <a className="text-2xl font-bold text-orange-500">DoNow</a>
+            <a className="text-2xl font-bold text-blue-500">TaskChamp</a>
           </Link>
         </div>
         <nav className="flex flex-col md:flex-row items-center space-y-2 md:space-y-0 md:space-x-4">
-          <Link href="/" legacyBehavior>
-            <a className="hover:text-orange-500">Home</a>
-          </Link>
-          <Link href="/about" legacyBehavior>
-            <a className="hover:text-orange-500">About</a>
-          </Link>
-          <Link href="/contact" legacyBehavior>
-            <a className="hover:text-orange-500">Contact</a>
-          </Link>
           {status === 'authenticated' ? (
             <div className="flex flex-col md:flex-row items-center space-y-2 md:space-y-0 md:space-x-4">
               <p className="font-bold text-white">
