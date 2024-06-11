@@ -1,7 +1,8 @@
 'use client';
 import { useEffect, useState } from 'react';
 import Task from './Task';
-const TodoApp = () => {
+import { AddTodo } from '@/actions/todo.actions';
+const TodoApp = ({ user }) => {
   const [tasks, setTasks] = useState([
     {
       id: 1,
@@ -25,18 +26,30 @@ const TodoApp = () => {
       assignedBy: 'Self',
     },
   ]);
+  console.log('Userss', user);
   const [filteredTasks, setFilteredTasks] = useState(tasks);
   const [newTask, setNewTask] = useState('');
   const [activeFilter, setActiveFilter] = useState('All');
+  const userId = user._id;
 
-  const handleAddTask = () => {
+  const handleAddTask = async () => {
     if (newTask.trim()) {
-      setTasks([
-        ...tasks,
-        { id: tasks.length + 1, text: newTask, completed: false },
-      ]);
-      setNewTask('');
+      console.log('new task', newTask, false, userId, userId);
+      const response = await AddTodo(newTask, false, userId, userId);
+      console.log('Response', response);
+      if (response.success) {
+        setTasks([
+          ...tasks,
+          { id: tasks.length + 1, text: newTask, completed: false },
+        ]);
+        setNewTask('');
+      } else {
+        console.log('failed to ad task to database');
+      }
     }
+
+    //const response = await AddTodo(newTask);
+    //console.log(response);
   };
 
   const handleToggleTask = (id) => {
@@ -70,28 +83,28 @@ const TodoApp = () => {
   };
 
   const completedTasksCount = tasks.filter((task) => task.completed).length;
+  const completePercentage = Math.round(
+    (completedTasksCount / tasks.length) * 100
+  );
 
-  // const allTasks = tasks;
+  const getCompletionMessage = (percentage) => {
+    if (percentage >= 100) {
+      return 'Wow, Awesome job, you are a rockstar!';
+    } else if (percentage >= 66) {
+      return 'You are rocking today!';
+    } else if (percentage >= 33) {
+      return 'Keep it up!';
+    } else {
+      return 'You can do it!';
+    }
+  };
 
-  // const SelfTasks = tasks.filter((task) => task.assignedTo === 'Self');
-
-  // const AssignedToYou = tasks.filter((task) => task.assignedBy !== 'Self');
-  // const AssignedByYou = tasks.filter(
-  //   (task) => task.assignedBy === 'Self' && task.assignedTo !== 'Self'
-  // );
-
-  // const handleTaskSort = (filter) => {
-  //   console.log(filter);
-  //   if (filter === 'All') {
-  //     setFilteredTasks(allTasks);
-  //   } else if (filter === 'AssignedToYou') {
-  //     setFilteredTasks(AssignedToYou);
-  //   } else if (filter === 'Self') {
-  //     setFilteredTasks(SelfTasks);
-  //   } else if (filter === 'AssignedByYou') {
-  //     setFilteredTasks(AssignedByYou);
-  //   }
-  // };
+  const filterLabels = {
+    All: 'All',
+    Self: 'Your Tasks',
+    AssignedToYou: 'Assigned To You',
+    AssignedByYou: 'Assigned By You',
+  };
 
   const handleTaskSort = (filter) => {
     setActiveFilter(filter);
@@ -109,6 +122,7 @@ const TodoApp = () => {
       );
     }
   };
+
   useEffect(() => {
     setFilteredTasks(tasks);
   }, [tasks]);
@@ -122,7 +136,7 @@ const TodoApp = () => {
           <div className="text-3xl font-bold text-blue-500">
             {completedTasksCount}/{tasks.length}
           </div>
-          <div>Keep it up/ Awesome Job/You can do it</div>
+          <div>{getCompletionMessage(completePercentage)}</div>
         </div>
 
         <div className="flex mb-4">
@@ -145,13 +159,11 @@ const TodoApp = () => {
             <button
               key={filter}
               onClick={() => handleTaskSort(filter)}
-              className={`border-solid border-white border-2 rounded px-4 py-1 mr-2 ${
+              className={`border-solid border-white border-b-2 rounded px-4 py-1 mr-2 ${
                 activeFilter === filter ? 'bg-blue-500 text-white' : ''
               }`}
             >
-              {filter === 'Self'
-                ? 'Your Tasks'
-                : filter.replace('Assigned', 'Assigned ')}
+              {filterLabels[filter]}
             </button>
           ))}
         </div>

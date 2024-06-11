@@ -12,7 +12,7 @@ export default function Home() {
     return (
       <>
         <Header />
-        <TodoApp />
+        <TodoApp user={session.user} />
       </>
     );
   }

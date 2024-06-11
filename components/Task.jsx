@@ -20,22 +20,13 @@ const Task = ({ task, handleToggleTask, handleDeleteTask, handleEditTask }) => {
           </span>
         </div>
         <div className="flex items-center">
-          <button
-            // onClick={() => handleToggleTask(task.id)}
-            className="text-gray-400 hover:text-white mr-2"
-          >
+          <button className="text-gray-400 hover:text-white mr-2">
             <span className="flex text-xs">Assigned to: {task.assignedTo}</span>
             <span className="flex text-xs">Assigned by: {task.assignedBy}</span>
           </button>
-          {/* <button
-            onClick={() => handleToggleTask(task.id)}
-            className="text-gray-400 hover:text-white mr-2"
-          ></button> */}
+
           <EditTask handleEditTask={handleEditTask} task={task}></EditTask>
-          {/* <button
-            onClick={() => handleDeleteTask(task.id)}
-            className="text-gray-400 hover:text-white"
-          ></button> */}
+
           <DeleteTask
             handleDeleteTask={handleDeleteTask}
             task={task}

@@ -1,3 +1,4 @@
+'use server';
 //Register Action
 
 export async function Register(email, password) {
