@@ -7,7 +7,7 @@ export async function POST(req) {
   await ConnectionDB();
   try {
     const _req = await req.json();
-    const { email, password } = _req;
+    const { email, firstname, lastname, password } = _req;
     const hashedpassword = await bcrypt.hash(password, 10);
     const existinguser = await User.findOne({ email });
     if (existinguser) {
@@ -21,6 +21,8 @@ export async function POST(req) {
       const newUser = new User({
         email,
         password: hashedpassword,
+        firstname,
+        lastname,
       });
       await newUser.save();
       return NextResponse.json(

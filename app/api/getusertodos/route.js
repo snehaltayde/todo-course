@@ -13,11 +13,11 @@ export async function POST(req) {
     })
       .populate({
         path: 'assigned_to',
-        select: 'name email _id', // Select specific fields and exclude others (e.g., exclude the _id field)
+        select: 'firstname lastname email _id', // Select specific fields and exclude others (e.g., exclude the _id field)
       })
       .populate({
         path: 'creator',
-        select: 'name email _id',
+        select: 'firstname lastname email _id',
       });
 
     if (todos) {

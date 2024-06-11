@@ -1,14 +1,14 @@
 'use server';
 //Register Action
 
-export async function Register(email, password) {
+export async function Register(email, firstname, lastname, password) {
   try {
     const response = await fetch('http://localhost:3000/api/register', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({ email, password }),
+      body: JSON.stringify({ email, firstname, lastname, password }),
     });
 
     const data = await response.json();
