@@ -11,7 +11,7 @@ const Header = () => {
       <div className="container mx-auto flex flex-col md:flex-row items-center justify-between">
         <div className="flex items-center mb-4 md:mb-0">
           <Link href="/" legacyBehavior>
-            <a className="text-2xl font-bold text-orange-500">XeroTasks</a>
+            <a className="text-2xl font-bold text-orange-500">DoNow</a>
           </Link>
         </div>
         <nav className="flex flex-col md:flex-row items-center space-y-2 md:space-y-0 md:space-x-4">
