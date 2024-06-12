@@ -16,12 +16,17 @@ export async function POST(req) {
     });
     await todo.save();
 
-    if (todo) {
+    // Populate creator and assigned_to fields
+    const populatedTodo = await Todo.findById(todo._id)
+      .populate('creator', '_id firstname lastname email')
+      .populate('assigned_to', '_id firstname lastname email');
+
+    if (populatedTodo) {
       return NextResponse.json(
         {
           message: 'Todo Added',
           success: true,
-          todo,
+          todo: populatedTodo,
         },
         { status: 200 }
       );
@@ -31,6 +36,7 @@ export async function POST(req) {
       {
         message: 'Something Went Wrong Route',
         error,
+        success: false,
       },
       { status: 500 }
     );

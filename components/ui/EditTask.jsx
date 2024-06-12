@@ -9,12 +9,11 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '@/components/ui/dialog';
-const EditTask = ({ handleEditTask, task }) => {
-  const [editTask, setEditTask] = useState(task.text);
-  console.log(editTask);
-  const [editAssignedTo, setEditAssignedTo] = useState(task.assignedTo);
+const EditTask = ({ handleEditTask, task, allusers }) => {
+  const [newTask, setNewTask] = useState(task.text);
+  console.log(newTask);
+  const [newAssignedTo, setEditAssignedTo] = useState(task.assigned_to?._id);
   const [open, setOpen] = useState(false);
-
   return (
     <div>
       <Dialog open={open} onOpenChange={setOpen}>
@@ -28,25 +27,35 @@ const EditTask = ({ handleEditTask, task }) => {
             <input
               type="text"
               className="flex-1 p-2 rounded-lg bg-gray-700 text-white"
-              onChange={(e) => setEditTask(e.target.value)}
-              value={editTask}
+              onChange={(e) => setNewTask(e.target.value)}
+              value={newTask}
             />
             <label> Assigned To </label>
             <select
-              className="p-2 rounded-lg bg-gray-700 text-white"
-              value={editAssignedTo}
+              className="p-1 rounded-lg bg-gray-700 text-white"
+              value={newAssignedTo}
               onChange={(e) => setEditAssignedTo(e.target.value)}
             >
-              <option value="Self">Self</option>
-              <option value="Snehal">Snehal</option>
-              <option value="Pooja">Pooja</option>
+              <option key={task.assigned_to?._id} value={task.assigned_to?._id}>
+                {' '}
+                {task.assigned_to?.firstname + ' ' + task.assigned_to?.lastname}
+              </option>
+              {allusers &&
+                allusers.map(
+                  (iuser) =>
+                    iuser._id !== task.assigned_to?._id && (
+                      <option key={iuser._id} value={iuser._id}>
+                        {iuser.firstname + ' ' + iuser.lastname}
+                      </option>
+                    )
+                )}
 
               {/* Add more options as necessary */}
             </select>
           </form>
           <button
             onClick={() => {
-              handleEditTask(task.id, editTask, editAssignedTo);
+              handleEditTask(task._id, newTask, newAssignedTo);
               setOpen(false);
             }}
             className="bg-blue-500 p-2 rounded-lg text-white"
