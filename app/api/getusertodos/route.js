@@ -8,6 +8,7 @@ export async function POST(req) {
   try {
     const { userId } = await req.json();
 
+    console.log('Uid', userId);
     const todos = await Todo.find({
       $or: [{ assigned_to: userId }, { creator: userId }],
     })
@@ -19,6 +20,8 @@ export async function POST(req) {
         path: 'creator',
         select: 'firstname lastname email _id',
       });
+
+    console.log('Uid2w', todos);
 
     if (todos) {
       return NextResponse.json(

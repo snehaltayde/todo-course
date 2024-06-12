@@ -21,7 +21,7 @@ const DeleteTask = ({ handleDeleteTask, task }) => {
               account and remove your data from our servers.
             </DialogDescription>
             <button
-              onClick={() => handleDeleteTask(task.id)}
+              onClick={() => handleDeleteTask(task._id)}
               className="bg-blue-500 p-2 rounded-lg text-white mt-2"
             >
               Confirm Delete

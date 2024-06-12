@@ -1,85 +1,106 @@
 'use client';
 import { useEffect, useState } from 'react';
 import Task from './Task';
-import { AddTodo } from '@/actions/todo.actions';
+import {
+  AddTodo,
+  updateTodo,
+  getAllTodos,
+  toggleTodo,
+  deleteTodo,
+} from '@/actions/todo.actions';
+import { getAllUsers } from '@/actions/user.actions';
 const TodoApp = ({ user }) => {
-  const [tasks, setTasks] = useState([
-    {
-      id: 1,
-      text: 'Task 1',
-      completed: false,
-      assignedTo: 'Snehal',
-      assignedBy: 'Self',
-    },
-    {
-      id: 2,
-      text: 'Task 2',
-      completed: true,
-      assignedTo: 'Self',
-      assignedBy: 'Lucky',
-    },
-    {
-      id: 3,
-      text: 'Task 3',
-      completed: false,
-      assignedTo: 'Self',
-      assignedBy: 'Self',
-    },
-  ]);
-  console.log('Userss', user);
+  const [tasks, setTasks] = useState([]);
   const [filteredTasks, setFilteredTasks] = useState(tasks);
   const [newTask, setNewTask] = useState('');
   const [activeFilter, setActiveFilter] = useState('All');
+  const [allusers, setUsers] = useState([]);
   const userId = user._id;
+  console.log(tasks);
+
+  const handleGetAlltodos = async () => {
+    const response = await getAllTodos(userId);
+    console.log(userId);
+    console.log(response);
+    if (response.success) {
+      setTasks(response.todos);
+    }
+  };
+
+  const getAllusers = async () => {
+    const response = await getAllUsers();
+    console.log('ResUser', response);
+    if (response.success) {
+      setUsers(response.users);
+    }
+  };
+
+  useEffect(() => {
+    handleGetAlltodos();
+    getAllusers();
+  }, []);
 
   const handleAddTask = async () => {
     if (newTask.trim()) {
       console.log('new task', newTask, false, userId, userId);
       const response = await AddTodo(newTask, false, userId, userId);
-      console.log('Response', response);
-      if (response.success) {
+      console.log('Response', JSON.stringify(response, null, 2));
+
+      if (response && response.success) {
         setTasks([
           ...tasks,
-          { id: tasks.length + 1, text: newTask, completed: false },
+          {
+            _id: response.todo._id,
+            text: newTask,
+            completed: false,
+            assigned_to: response.todo.assigned_to,
+            creator: response.todo.creator,
+          },
         ]);
+
         setNewTask('');
       } else {
         console.log('failed to ad task to database');
       }
     }
-
-    //const response = await AddTodo(newTask);
-    //console.log(response);
   };
 
-  const handleToggleTask = (id) => {
-    setTasks(
-      tasks.map((task) =>
-        task.id === id ? { ...task, completed: !task.completed } : task
-      )
-    );
+  const handleToggleTask = async (id) => {
+    const response = await toggleTodo(id, userId);
+    console.log(response);
+    if (response.success) {
+      setTasks(
+        tasks.map((task) =>
+          task._id === id ? { ...task, completed: !task.completed } : task
+        )
+      );
+    }
   };
 
-  const handleEditTask = (id, newText, newAssignedTo) => {
-    setTasks(
-      tasks.map((task) =>
-        task.id === id
-          ? { ...task, text: newText, assignedTo: newAssignedTo }
-          : task
-      )
-    );
-    setFilteredTasks(
-      tasks.map((task) =>
-        task.id === id
-          ? { ...task, text: newText, assignedTo: newAssignedTo }
-          : task
-      )
-    );
+  const handleEditTask = async (id, newText, newAssignedTo) => {
+    console.log('EditTask', id, newText, newAssignedTo);
+    const response = await updateTodo(id, userId, newText, newAssignedTo);
+    if (response.success) {
+      setTasks(
+        tasks.map((task) =>
+          task._id === id
+            ? {
+                ...task,
+                text: newText,
+                assigned_to: response.todo.assigned_to,
+                creator: response.todo.creator,
+              }
+            : task
+        )
+      );
+    }
   };
 
-  const handleDeleteTask = (id) => {
-    setTasks(tasks.filter((task) => task.id !== id));
-    setFilteredTasks(tasks.filter((task) => task.id !== id));
+  const handleDeleteTask = async (id) => {
+    const response = await deleteTodo(id, userId);
+    if (response && response.success) {
+      setTasks(tasks.filter((task) => task._id !== id));
+    }
   };
 
   const completedTasksCount = tasks.filter((task) => task.completed).length;
@@ -111,13 +132,16 @@ const TodoApp = ({ user }) => {
     if (filter === 'All') {
       setFilteredTasks(tasks);
     } else if (filter === 'AssignedToYou') {
-      setFilteredTasks(tasks.filter((task) => task.assignedBy !== 'Self'));
+      setFilteredTasks(tasks.filter((task) => task.creator._id !== userId));
     } else if (filter === 'Self') {
-      setFilteredTasks(tasks.filter((task) => task.assignedTo === 'Self'));
+      setFilteredTasks(
+        tasks.filter((task) => task.assigned_to?._id === userId)
+      );
     } else if (filter === 'AssignedByYou') {
       setFilteredTasks(
         tasks.filter(
-          (task) => task.assignedBy === 'Self' && task.assignedTo !== 'Self'
+          (task) =>
+            task.creator._id === userId && task.assigned_to?._id !== userId
         )
       );
     }
@@ -209,6 +233,8 @@ const TodoApp = ({ user }) => {
                 <Task
                   key={task.id}
                   task={task}
+                  userId={userId}
+                  allusers={allusers}
                   handleToggleTask={handleToggleTask}
                   handleDeleteTask={handleDeleteTask}
                   handleEditTask={handleEditTask}
