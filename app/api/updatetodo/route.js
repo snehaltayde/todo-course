@@ -9,7 +9,9 @@ export async function POST(req) {
     const { action, todoID, userId, newText, newAssignedTo } = await req.json();
 
     if (action === 'toggle') {
-      const todo = await Todo.findOne({ _id: todoID, creator: userId });
+      // const todo = await Todo.findOne({ _id: todoID, creator: userId });
+
+      const todo = await Todo.findOne({ _id: todoID });
       if (!todo) {
         return NextResponse.json(
           { message: 'Todo not found' },

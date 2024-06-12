@@ -5,6 +5,7 @@ import TodoApp from '@/components/Todo';
 export default function Home() {
   const { data: session, status } = useSession();
   console.log('Session', session);
+
   if (status === 'loading') {
     return <>Loading...</>;
   }
